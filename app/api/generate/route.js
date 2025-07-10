@@ -1,22 +1,20 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+import { db } from "@/utils/db"; 
+import { MockInterview } from "@/utils/schema";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req) {
   if (!process.env.GEMINI_API_KEY) {
-    console.error("GEMINI_API_KEY is not set in the environment variables.");
-    return NextResponse.json(
-      { error: "Server configuration error: Missing API Key." },
-      { status: 500 }
-    );
+    console.error("GEMINI_API_KEY is not set.");
+    return NextResponse.json({ error: "Missing API Key." }, { status: 500 });
   }
 
   const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   try {
-    // 1. Get the user's input from the front-end
     const { jobPosition, jobDesc, jobExperience } = await req.json();
 
-    // 2. Create the new, dynamic prompt using the user's input
     const prompt = `
       You are an expert technical hiring manager for a top tech company. Your task is to generate relevant interview questions for a candidate.
 
@@ -32,44 +30,40 @@ export async function POST(req) {
 
       Tailor the difficulty of the questions to a candidate with approximately ${jobExperience} years of experience.
 
-      For each question, provide a short, ideal answer from the candidate's perspective, explaining what a good response should cover.
-
       IMPORTANT: Provide the output as a single, valid JSON object. The object must have a key named "questions" which holds an array of 5 objects. Each object in the array must have two keys: "question" and "answer". Do not include any text or formatting outside of this JSON object.
     `;
 
-    // 3. Call the Gemini API with the new prompt
     const result = await genAI.models.generateContent({
       model: "gemini-1.5-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    // 4. Get the response text
-    const jsonText = result.text;
-    
-    if (!jsonText) {
-      console.error("--- ERROR IN GENERATE API ROUTE ---");
-      console.error("API returned no text. Prompt might have been blocked.");
-      console.error("Full API Response:", JSON.stringify(result, null, 2)); 
-      throw new Error("No text response from API. The prompt may have been blocked or the response was empty.");
-    }
-    
-    // 5. Clean and parse the JSON response
-    const cleanedJsonText = jsonText.replace('```json', '').replace('```', '').trim();
-    const parsedJson = JSON.parse(cleanedJsonText);
-    
-    // 6. Send the successfully parsed data back to the front-end
-    return NextResponse.json(parsedJson);
+    const rawText = result.text;
+    if (!rawText) throw new Error("Empty response from Gemini API.");
+
+    const cleaned = rawText.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(cleaned);
+
+    const mockId = uuidv4();
+    const createdAt = new Date().toISOString();
+    const createdBy = "guest"; // Replace with session if auth exists
+
+    await db.insert(MockInterview).values({
+      jsonMockResp: JSON.stringify(parsed),
+      jobPosition,
+      jobDesc,
+      jobExperience,
+      createdBy,
+      createdAt,
+      mockId,
+    });
+
+    return NextResponse.json({ success: true, mockId, questions: parsed.questions });
 
   } catch (error) {
-    console.error("--- ERROR IN GENERATE API ROUTE ---");
-    console.error(error);
-    console.error("------------------------------------");
-
+    console.error("ERROR in /api/generate:", error);
     return NextResponse.json(
-      { 
-        error: "Failed to generate interview questions.", 
-        details: error.message || "An unknown error occurred." 
-      },
+      { error: "Failed to generate and save interview questions.", details: error.message },
       { status: 500 }
     );
   }

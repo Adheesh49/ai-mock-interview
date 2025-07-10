@@ -10,9 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
-import { useRouter } from 'next/navigation'; 
- 
 function AddNewInterview() {
   const [openDialog, setOpenDialog] = useState(false);
   const [jobPosition, setJobPosition] = useState("");
@@ -27,11 +26,10 @@ function AddNewInterview() {
     setLoading(true);
 
     try {
-      // Call our new API route
-      const response = await fetch('/api/generate', {
-        method: 'POST',
+      const response = await fetch("/api/generate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           jobPosition,
@@ -41,18 +39,15 @@ function AddNewInterview() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate questions. Server responded with an error.');
+        throw new Error("Failed to generate questions. Server responded with an error.");
       }
 
       const result = await response.json();
       console.log("Generated Questions:", result.questions);
-
-
-      setOpenDialog(false); // Close the dialog on success
-
+      setOpenDialog(false); // Close dialog on success
     } catch (error) {
       console.error("Error during form submission:", error);
-      alert('There was an error generating your interview. Please try again.'); // User-friendly error
+      alert("There was an error generating your interview. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -67,6 +62,7 @@ function AddNewInterview() {
       >
         <h2 className="font-bold text-lg text-center">+ Add New</h2>
       </div>
+
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="bg-white text-black max-w-2xl">
           <DialogHeader>
@@ -74,58 +70,59 @@ function AddNewInterview() {
               Tell us more about your job interview.
             </DialogTitle>
             <DialogDescription>
-              <form onSubmit={onSubmit}>
-                <div>
-                  <h2>
-                    Add details about your job position/role, job description and years of experience.
-                  </h2>
-                  <div className="mt-7 my-2">
-                    <label>Job Role/Position</label>
-                    <Input
-                      placeholder="Ex. Full Stack Developer"
-                      required
-                      value={jobPosition}
-                      onChange={(event) => setJobPosition(event.target.value)}
-                    />
-                  </div>
-                  <div className="my-3">
-                    <label>Job Description/ Tech Stack (In Short)</label>
-                    <Textarea
-                      placeholder="Ex. Responsible for developing and maintaining web applications using React, Node.js, and PostgreSQL."
-                      required
-                      value={jobDesc}
-                      onChange={(event) => setJobDesc(event.target.value)}
-                    />
-                  </div>
-                  <div className="my-2">
-                    <label>Years of Experience</label>
-                    <Input
-                      placeholder="Ex. 5"
-                      type="number"
-                      max="50"
-                      min="0"
-                      required
-                      value={jobExperience}
-                      onChange={(event) => setJobExperience(event.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-5 justify-end mt-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setOpenDialog(false)}
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={loading}>
-                    {loading ? 'Generating...' : 'Start Interview'}
-                  </Button>
-                </div>
-              </form>
+              Add details about your job role, description, and experience to help generate tailored interview questions.
             </DialogDescription>
           </DialogHeader>
+
+          {/* ✅ Moved form outside of DialogDescription */}
+          <form onSubmit={onSubmit} className="mt-4 space-y-4">
+            <div>
+              <label className="font-medium">Job Role/Position</label>
+              <Input
+                placeholder="Ex. Full Stack Developer"
+                required
+                value={jobPosition}
+                onChange={(e) => setJobPosition(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="font-medium">Job Description / Tech Stack</label>
+              <Textarea
+                placeholder="Ex. Build and maintain apps using React, Node.js, PostgreSQL..."
+                required
+                value={jobDesc}
+                onChange={(e) => setJobDesc(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="font-medium">Years of Experience</label>
+              <Input
+                type="number"
+                placeholder="Ex. 3"
+                min="0"
+                max="50"
+                required
+                value={jobExperience}
+                onChange={(e) => setJobExperience(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end gap-4 pt-4">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setOpenDialog(false)}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Generating..." : "Start Interview"}
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
