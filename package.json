@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "npx drizzle-kit up",
+    "db:push": "dotenv -e .env.local -- drizzle-kit push",
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
@@ -24,7 +24,9 @@
     "openai": "^5.8.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-speech-recognition": "^4.0.1",
     "react-webcam": "^7.2.0",
+    "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7"
   },
@@ -32,6 +34,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.0.10",
     "autoprefixer": "^10.4.21",
+    "dotenv-cli": "^8.0.0",
     "drizzle-kit": "^0.31.4",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
