@@ -111,7 +111,7 @@ export default function InterviewPage() {
               {activeQuestionIndex > 0 ? (
                 <button onClick={handlePreviousQuestion} className="px-6 py-2 rounded-full bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400">Previous</button>
               ) : (
-                <div /> // Spacer
+                <div /> 
               )}
 
               {/* Next Button */}
@@ -133,14 +133,25 @@ export default function InterviewPage() {
           </div>
         </div>
       ) : (
-        // SETUP SCREEN (Unchanged)
         <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
           <h2 className="text-2xl font-bold text-center">Ready for your Mock Interview?</h2>
           <div className="w-full max-w-xl p-6 border rounded-lg flex flex-col items-center gap-4">
             <div className="w-full h-64 bg-black rounded-lg flex items-center justify-center">{webcamEnabled ? (<Webcam audio={false} mirrored={true} className="rounded-lg h-full w-full object-cover" />) : (<div className="flex flex-col items-center gap-2 text-white"><Video size={40} /><p>Camera Preview is Off</p></div>)}</div>
             <div className="flex items-center justify-center gap-4"><span className="font-semibold text-gray-700">Enable Camera Preview</span><button onClick={() => setWebcamEnabled(!webcamEnabled)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${webcamEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}><span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${webcamEnabled ? 'translate-x-6' : 'translate-x-1'}`} /></button></div>
           </div>
-          <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg text-yellow-800 max-w-xl text-left"><div className="flex items-center gap-3"><Lightbulb size={20} /><h3 className="text-lg font-bold">Information</h3></div><p className="mt-2 text-sm">The interview has {interviewData?.questions?.length || 5} questions. You'll get a report based on your answers.</p></div>
+          <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg text-yellow-800 max-w-xl text-left">
+          <div className="flex items-center gap-3">
+          <Lightbulb size={20} />
+          <h3 className="text-lg font-bold">Information</h3>
+          </div>
+          <p className="mt-2 text-sm">
+          The interview has {interviewData?.questions?.length || 5} questions. You'll get a report based on your answers.
+          </p>
+          <p className="mt-2 text-sm">
+          <strong>Note:</strong> Press the mic icon to start answering.
+        </p>
+        </div>
+
           <div className="mt-4"><button onClick={handleStartInterview} className="px-8 py-3 rounded-lg bg-green-600 text-white font-bold text-xl hover:bg-green-700 transition-colors shadow-lg">Start Interview</button></div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import { db } from '@/utils/db';
 import { MockInterview } from '@/utils/schema';
-import { currentUser } from '@clerk/nextjs/server'; // Assuming Clerk auth
+import { currentUser } from '@clerk/nextjs/server'; 
 import { eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
