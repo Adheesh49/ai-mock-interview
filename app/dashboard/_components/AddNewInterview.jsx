@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // 1. Import the useRouter hook
+import { toast, Toaster } from "sonner"; // For user feedback
 
 function AddNewInterview() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -19,7 +20,7 @@ function AddNewInterview() {
   const [jobExperience, setJobExperience] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
+  const router = useRouter(); // 2. Initialize the router
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -28,33 +29,39 @@ function AddNewInterview() {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jobPosition,
-          jobDesc,
-          jobExperience,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobPosition, jobDesc, jobExperience }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate questions. Server responded with an error.");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate interview.");
       }
 
       const result = await response.json();
-      console.log("Generated Questions:", result.questions);
-      setOpenDialog(false); // Close dialog on success
+      
+      // 3. Check for the new interview ID and redirect
+      if (result?.mockId) {
+        console.log("Interview created, redirecting to:", result.mockId);
+        toast.success("Interview created successfully! Redirecting...");
+        setOpenDialog(false); // Close the dialog
+        router.push(`/dashboard/interview/${result.mockId}`); // Redirect the user
+      } else {
+        throw new Error("Failed to get a valid interview ID from the server.");
+      }
+
     } catch (error) {
       console.error("Error during form submission:", error);
-      alert("There was an error generating your interview. Please try again.");
-    } finally {
-      setLoading(false);
+      toast.error(error.message);
+      setLoading(false); // Only set loading to false on error
     }
   };
 
   return (
     <div>
+      {/* Toaster is needed to show the notifications */}
+      <Toaster richColors />
+      
       <div
         className="p-10 border rounded-lg bg-secondary 
         hover:scale-105 hover:shadow-md cursor-pointer transition-all"
@@ -74,7 +81,6 @@ function AddNewInterview() {
             </DialogDescription>
           </DialogHeader>
 
-          {/* ✅ Moved form outside of DialogDescription */}
           <form onSubmit={onSubmit} className="mt-4 space-y-4">
             <div>
               <label className="font-medium">Job Role/Position</label>
@@ -85,7 +91,6 @@ function AddNewInterview() {
                 onChange={(e) => setJobPosition(e.target.value)}
               />
             </div>
-
             <div>
               <label className="font-medium">Job Description / Tech Stack</label>
               <Textarea
@@ -95,7 +100,6 @@ function AddNewInterview() {
                 onChange={(e) => setJobDesc(e.target.value)}
               />
             </div>
-
             <div>
               <label className="font-medium">Years of Experience</label>
               <Input
@@ -108,14 +112,8 @@ function AddNewInterview() {
                 onChange={(e) => setJobExperience(e.target.value)}
               />
             </div>
-
             <div className="flex justify-end gap-4 pt-4">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setOpenDialog(false)}
-                disabled={loading}
-              >
+              <Button type="button" variant="ghost" onClick={() => setOpenDialog(false)} disabled={loading}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
