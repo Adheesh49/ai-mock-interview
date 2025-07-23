@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🤖 AI Mock Interview Generator
 
-## Getting Started
+An AI-powered mock interview platform built with React and Google Gemini API. This project allows users to input job details and receive dynamically generated interview questions, helping job seekers prepare effectively for technical and behavioral interviews.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- 🧠 Integrates with **Gemini API** to generate smart interview questions
+- 💬 Dialog form for users to input job details like position, experience, and description
+- 📄 Questions stored in **PostgreSQL** using **Drizzle ORM** and **Neon**
+- 💾 Backend powered by **Next.js App Router**
+- 🔐 Secure user sessions and unique mock interview history
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="Dashboard.png" alt="Dashboard" width="48%" />
+  <img src="Interview.png" alt="Interview" width="48%" />
+</div>
+
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React + Tailwind CSS
+- **Backend**: Next.js 14 (App Router)
+- **Database**: PostgreSQL with Neon + Drizzle ORM
+- **AI API**: Gemini API from Google
+- **Deployment**: Vercel 
+- **Authentication**: Clerk
+---
+
+## ⚙️ How to Run the Project Locally
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Adheesh49/ai-mock-interview.git
+cd ai-mock-interview
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Setup Environment Variables
+
+Create a `.env.local` file in the root directory and add:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+DATABASE_URL=your_neon_postgres_url
+NEXTAUTH_SECRET=your_next_auth_secret
+```
+> Make sure to set up Neon database and configure Drizzle schema accordingly.
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to access the app.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Project Structure
 
-## Learn More
+```
+ai-mock-interview/
+├── app/                # Next.js app router components
+├── components/         # Reusable UI components
+├── lib/                # DB, utils, and API logic
+├── drizzle/            # Drizzle ORM schema
+├── public/             # Static files
+├── .env.local          # Environment variables
+├── package.json
+└── README.md
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌍 Live Demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The AI Mock Interview platform is live and ready to use!
 
-## Deploy on Vercel
+🔗 **Visit here**: [https://ai-mock-interview-sepia-sigma.vercel.app/](https://ai-mock-interview-sepia-sigma.vercel.app/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧑‍💻 Author
+
+**Adheesh Raj Pandey**  
+[GitHub](https://github.com/Adheesh49) | [LinkedIn](https://www.linkedin.com/in/adheeshrajpandey)
+
+---
+
+## 🙌 Contributions
+
+Pull requests are welcome! Feel free to fork and submit improvements or new features.
+
+---
+
+## ⭐️ Support
+
+If you find this helpful, consider giving it a ⭐ on GitHub!
